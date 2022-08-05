@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc
+from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
 from data import gapminder, migrantes
 from scatter import get_scatter, get_bubble, get_animated
@@ -21,16 +21,63 @@ server = app.server
 
 app.layout = dbc.Container(
     children=[
+        html.H1("Práctica 5: Dashboard"),
         dbc.Row(
             [
-                dbc.Col(html.H1("Ejercicio 1 de la tarea 2"), width=3),
+                dbc.Col(
+                    [
+                        html.H1("Ejercicio 1 de la tarea 2"),
+                        dbc.Card(
+                            [
+                                html.H4("Controles", className="card-title"),
+                                html.Div(
+                                    [
+                                        dbc.Label("Año"),
+                                        dcc.Dropdown(
+                                            id="year1",
+                                            options=[
+                                                {"label": y, "value": y}
+                                                for y in gapminder.year.unique()
+                                            ],
+                                            value=2007,
+                                        ),
+                                    ]
+                                ),
+                            ]
+                        ),
+                    ],
+                    width=3,
+                ),
                 dbc.Col(dcc.Graph(id="scatter", figure=get_scatter(gapminder, 2007))),
             ],
             align="center",
         ),
         dbc.Row(
             [
-                dbc.Col(html.H1("Ejercicio 2 de la tarea 2"), width=3),
+                dbc.Col(
+                    [
+                        html.H1("Ejercicio 2 de la tarea 2"),
+                        dbc.Card(
+                            [
+                                html.H4("Controles", className="card-title"),
+                                html.Div(
+                                    [
+                                        dbc.Label("Año"),
+                                        dcc.Dropdown(
+                                            id="year2",
+                                            options=[
+                                                {"label": y, "value": y}
+                                                for y in gapminder.year.unique()
+                                            ],
+                                            value=2007,
+                                        ),
+                                    ]
+                                ),
+                            ]
+                        ),
+                    ],
+                    width=3,
+                ),
                 dbc.Col(dcc.Graph(id="bubble", figure=get_bubble(gapminder, 2007))),
             ],
             align="center",
@@ -52,6 +99,16 @@ app.layout = dbc.Container(
     ],
     className="p-5",
 )
+
+
+@app.callback(Output("scatter", "figure"), [Input("year1", "value")])
+def update_scatter(year):
+    return get_scatter(gapminder, year)
+
+
+@app.callback(Output("bubble", "figure"), [Input("year2", "value")])
+def update_scatter(year):
+    return get_bubble(gapminder, year)
 
 
 if __name__ == "__main__":
